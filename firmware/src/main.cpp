@@ -20,8 +20,8 @@ struct rawDataSensors { float tempRaw; float humRaw; };
 rawDataSensors data = {NAN, NAN};
 
 // Timer
-MillisTimer printIntervall(5000);
-MillisTimer uplinkIntervall(10000);    // <<< NEU: alle 10s zu Ubidots senden
+MillisTimer printIntervall(5000);     // <<< 
+MillisTimer uplinkIntervall(10000);    // <<< Alle 10s zu Ubidots senden
 
 // Sensor(e)
 // KY-015 (DHT11) am Digitalpin D2
