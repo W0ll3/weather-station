@@ -1,9 +1,6 @@
 #include "WiFiHelper.h"
 #include "MillisTimer.h"
 
-MillisTimer loadingMS(500);
-MillisTimer timeoutMS(10000);
-MillisTimer retryMS(5000);
 
 
 void connectWiFi(const char* ssid, const char* password) {
@@ -14,6 +11,8 @@ void connectWiFi(const char* ssid, const char* password) {
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
+    MillisTimer loadingMS(500);
+    MillisTimer timeoutMS(10000);
     if (loadingMS.ready()) {
       Serial.print(".");
     }
@@ -33,6 +32,7 @@ void connectWiFi(const char* ssid, const char* password) {
 }
 
 void maintainWiFi(const char* ssid, const char* password) {
+  MillisTimer retryMS(5000);
   if (retryMS.ready()) {
     if (WiFi.status() != WL_CONNECTED) {
       Serial.println("WLAN getrennt - versuche Neuverbindung...");

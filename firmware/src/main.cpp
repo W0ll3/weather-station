@@ -17,9 +17,6 @@ static const char* DEVICE_LABEL  = "wetterstation";              // <<< klein/0-
 struct rawDataSensors { float tempRaw; float humRaw; };
 rawDataSensors data = {NAN, NAN};
 
-// Timer
-MillisTimer printIntervall(5000);     // <<< 
-MillisTimer uplinkIntervall(10000);    // <<< Alle 10s zu Ubidots senden
 
 // Sensor(e)
 // KY-015 (DHT11) am Digitalpin D2
@@ -52,6 +49,7 @@ void readSensors() {
 
 // Bericht seriell
 void reportMessage() {
+  MillisTimer printIntervall(5000);     // <<< 
   if (isnan(data.tempRaw) || isnan(data.humRaw)) return;
   if (printIntervall.ready()) {
     Serial.print("RAW T/H: ");
@@ -62,6 +60,7 @@ void reportMessage() {
 
 // <<< NEU: HTTP POST an Ubidots -> Periodisch -> Daten prüfen -> Body bauen ->  
 void sendUbidots() {
+  MillisTimer uplinkIntervall(10000);    // <<< Alle 10s zu Ubidots senden
   if (!uplinkIntervall.ready()) return;
   if (isnan(data.tempRaw) || isnan(data.humRaw)) {
     Serial.println("[Ubidots] Werte noch nicht gültig");
