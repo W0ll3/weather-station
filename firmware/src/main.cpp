@@ -5,8 +5,8 @@
 #include "UbidotsRaw.h" //<<< HTTP verbindung 
 
 // WLAN-Zugang
-const char* SSID     = "XYZ";
-const char* PASSWORD = "XYZ";
+const char* SSID     = "Starman";
+const char* PASSWORD = "bazinga?";
 
 // Ubidots
 static const char* UBIDOTS_HOST  = "industrial.api.ubidots.com"; // STEM: "things.ubidots.com"
