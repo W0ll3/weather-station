@@ -6,14 +6,22 @@ class MillisTimer {
   unsigned long interval;
 
 public:
-  explicit MillisTimer(unsigned long ms) : interval(ms) {}
+  explicit MillisTimer(unsigned long interval) : interval(interval) {}
 
   bool ready() {
     unsigned long now = millis();
-    if (now - prev >= interval) { prev = now; return true; }
+    if (now - prev >= interval) { 
+      prev = now; 
+      return true; 
+    } 
     return false;
   }
 
-  void reset() { prev = millis(); }
-  void setInterval(unsigned long ms) { interval = ms; }
+  void reset() { 
+    prev = millis(); 
+  }
+
+  void setInterval(unsigned long ms) { 
+    interval = ms; 
+  }
 };

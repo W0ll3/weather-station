@@ -1,10 +1,8 @@
-#include <Arduino.h>
-#include <WiFiS3.h>
-#include <WiFiHelper.h>
-#include <MillisTimer.h>
-#include <DHT.h>
-#include "DHTSensor.h"
-#include <UbidotsRaw.h>               // <<< NEU
+#include <Arduino.h>  //<<< PlatformIO
+#include "WiFiHelper.h" //<<< Lib - Verbindung zum WiFi
+#include "MillisTimer.h" //<<< Lib - Timer
+#include "DHTSensor.h" //<<< Klasse - für Sensor DHT11
+#include "UbidotsRaw.h" //<<< HTTP verbindung 
 
 // WLAN-Zugang
 const char* SSID     = "XYZ";
@@ -61,7 +59,7 @@ void reportMessage() {
   }
 }
 
-// <<< NEU: HTTP POST an Ubidots
+// <<< NEU: HTTP POST an Ubidots -> Periodisch -> Daten prüfen -> Body bauen ->  
 void sendUbidots() {
   if (!uplinkIntervall.ready()) return;
   if (isnan(data.tempRaw) || isnan(data.humRaw)) {
@@ -75,6 +73,11 @@ void sendUbidots() {
   // verbundenen Client erzeugen (WiFiS3 stellt den TCP-Client)
   WiFiClient net; // lokal, pro POST neue Verbindung (Connection: close)
 
-  bool ok = UbidotsRaw::postDevice(net, UBIDOTS_HOST, DEVICE_LABEL, UBIDOTS_TOKEN, body);
-  Serial.println(ok ? "[Ubidots] OK" : "[Ubidots] FEHLER");
+  bool uploadSuccess = UbidotsRaw::postDevice(net, UBIDOTS_HOST, DEVICE_LABEL, UBIDOTS_TOKEN, body);
+  if (uploadSuccess) {
+    Serial.println("[Ubidots] Upload erfolgreich");
+    } 
+    else {
+    Serial.println("[Ubidots] Upload fehlgeschlagen");
+    }
 }
