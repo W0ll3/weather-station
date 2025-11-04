@@ -52,6 +52,7 @@ void readSensors() {
 
 // Bericht seriell
 void reportMessage() {
+  if (isnan(data.tempRaw) || isnan(data.humRaw)) return;
   if (printIntervall.ready()) {
     Serial.print("RAW T/H: ");
     Serial.print(data.tempRaw); Serial.print(" / ");

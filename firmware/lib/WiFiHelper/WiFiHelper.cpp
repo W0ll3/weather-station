@@ -14,9 +14,11 @@ void connectWiFi(const char* ssid, const char* password) {
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
-    if (loadingMS.ready()) Serial.print(".");
+    if (loadingMS.ready()) {
+      Serial.print(".");
+    }
     if (timeoutMS.ready()) {
-      Serial.println("\nKeine Verbindung – fahre trotzdem fort.");
+      Serial.println("\nKeine Verbindung - fahre trotzdem fort.");
     break;
     }
   }
@@ -33,7 +35,7 @@ void connectWiFi(const char* ssid, const char* password) {
 void maintainWiFi(const char* ssid, const char* password) {
   if (retryMS.ready()) {
     if (WiFi.status() != WL_CONNECTED) {
-      Serial.println("WLAN getrennt – versuche Neuverbindung...");
+      Serial.println("WLAN getrennt - versuche Neuverbindung...");
       WiFi.begin(ssid, password);
     }
   }
