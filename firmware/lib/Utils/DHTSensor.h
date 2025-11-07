@@ -15,10 +15,9 @@ class DHTSensor {
     dht.begin(); 
   } 
   void update() { // Hier liest du BEIDE Werte aus
-     temperature = dht.readTemperature(); 
-     humidity = dht.readHumidity(); 
+    temperature = dht.readTemperature(); 
+    humidity = dht.readHumidity(); 
     } 
-     
   float getTemperature() const { return temperature; } 
   float getHumidity() const { return humidity; }
 };

@@ -11,7 +11,9 @@ public:
   bool ready() {
     unsigned long now = millis();
     if (now - prev >= interval) { 
-      prev = now; 
+      unsigned long missed = now - prev;
+      unsigned long missedIntervals = missed / interval;
+      prev += missedIntervals * interval; 
       return true; 
     } 
     return false;
