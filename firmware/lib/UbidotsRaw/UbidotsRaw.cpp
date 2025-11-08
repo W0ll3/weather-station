@@ -1,5 +1,8 @@
 #include "UbidotsRaw.h"
-
+#include "MillisTimer.h"
+#include <WiFiS3.h>
+#include "DHTSensor.h"
+#include "secrets.h"
 namespace UbidotsRaw {
 
 String makeBodyTempHum(float tempC, float humPct) {
@@ -56,3 +59,32 @@ bool postDevice(Client& net,
 }
 
 } // namespace UbidotsRaw
+
+
+//timer
+  MillisTimer printIntervall(5000);     // <<< Alle 5s seriell ausgeben
+  MillisTimer uplinkIntervall(60000);    // <<< Alle 20s zu Ubidots senden
+
+// Daten zu Ubidots senden
+void sendUbidots() {
+  if (!uplinkIntervall.ready()) return;
+  if (isnan(data.tempRaw) || isnan(data.humRaw)) {
+    Serial.println("[Ubidots] Werte noch nicht gültig");
+    return;
+  }
+
+  // JSON bauen
+  String body = UbidotsRaw::makeBodyTempHum(data.tempRaw, data.humRaw);
+
+  // verbundenen Client erzeugen (WiFiS3 stellt den TCP-Client)
+  WiFiClient net; // lokal, pro POST neue Verbindung (Connection: close)
+
+  // Daten senden
+  bool uploadSuccess = UbidotsRaw::postDevice(net, UBIDOTS_HOST, DEVICE_LABEL, UBIDOTS_TOKEN, body);
+  if (uploadSuccess) {
+    Serial.println("[Ubidots] Upload erfolgreich");
+    } 
+    else {
+    Serial.println("[Ubidots] Upload fehlgeschlagen");
+    }
+}

@@ -20,3 +20,10 @@ bool postDevice(Client& net,
                 uint32_t respTimeoutMs = 5000);
 
 } // namespace UbidotsRaw
+
+//timer
+  extern MillisTimer printIntervall;     // <<< Alle 5s seriell ausgeben
+  extern MillisTimer uplinkIntervall;    // <<< Alle 20s zu Ubidots senden
+
+// Daten zu Ubidots senden
+void sendUbidots();

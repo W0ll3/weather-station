@@ -3,54 +3,27 @@
 #include "MillisTimer.h" //<<< Lib - Timer
 #include "DHTSensor.h" //<<< Klasse - für Sensor DHT11
 #include "UbidotsRaw.h" //<<< HTTP verbindung 
+#include "secrets.h"   //<<< Geheime Daten
 
-// WLAN-Zugang
-const char* SSID     = "XYZ";       // <<< DEIN SSID eintragen
-const char* PASSWORD = "XYZ"; // <<< DEIN Passwort eintragen
-
-// Ubidots
-static const char* UBIDOTS_HOST  = "things.ubidots.com"; // STEM: "things.ubidots.com"
-static const char* UBIDOTS_TOKEN = "BBUS-Zcuia8aqRNZLhCfxQ3NyA5R5zNLX9T";                   // <<< DEIN Token eintragen
-static const char* DEVICE_LABEL  = "wetterstation";              // <<< klein/0-9/_/-
-
-// Rohwerte (ADC)
-struct rawDataSensors { float tempRaw; float humRaw; };
-rawDataSensors data = {NAN, NAN};
-
-//timer
-  MillisTimer printIntervall(5000);     // <<< Alle 5s seriell ausgeben
-  MillisTimer uplinkIntervall(60000);    // <<< Alle 20s zu Ubidots senden
-
-// Sensor(e)
-// KY-015 (DHT11) am Digitalpin D2
-DHTSensor sensor_hum_temp(2, DHT11);
-
-// Vorwärtsdeklaration
-void readSensors();
+// Vorwärtsdeklarationen
 void reportMessage();
-void sendUbidots();
 
+// Setup und Loop
 void setup() {
   Serial.begin(115200);
   delay(5000); // Warte auf Serielle;
   sensor_hum_temp.begin();
-  connectWiFi(SSID, PASSWORD);
+  connectWiFi(WIFI_SSID, WIFI_PASS);
   printIntervall.reset();
 }
 
 void loop() {
-  readSensors();
-  reportMessage();
-  maintainWiFi(SSID, PASSWORD);
-  sendUbidots();
+  readSensors();  // Sensoren auslesen
+  reportMessage(); // Bericht seriell
+  maintainWiFi(WIFI_SSID, WIFI_PASS); // WiFi Verbindung aufrechterhalten
+  sendUbidots(); // Daten zu Ubidots senden
 }
 
-// Sensoren auslesen
-void readSensors() {
-  sensor_hum_temp.update();
-  data.tempRaw = sensor_hum_temp.getTemperature();
-  data.humRaw  = sensor_hum_temp.getHumidity();
-}
 
 // Bericht seriell
 void reportMessage() {
@@ -62,26 +35,4 @@ void reportMessage() {
   }
 }
 
-// Daten zu Ubidots senden
-void sendUbidots() {
-  if (!uplinkIntervall.ready()) return;
-  if (isnan(data.tempRaw) || isnan(data.humRaw)) {
-    Serial.println("[Ubidots] Werte noch nicht gültig");
-    return;
-  }
 
-  // JSON bauen
-  String body = UbidotsRaw::makeBodyTempHum(data.tempRaw, data.humRaw);
-
-  // verbundenen Client erzeugen (WiFiS3 stellt den TCP-Client)
-  WiFiClient net; // lokal, pro POST neue Verbindung (Connection: close)
-
-  // Daten senden
-  bool uploadSuccess = UbidotsRaw::postDevice(net, UBIDOTS_HOST, DEVICE_LABEL, UBIDOTS_TOKEN, body);
-  if (uploadSuccess) {
-    Serial.println("[Ubidots] Upload erfolgreich");
-    } 
-    else {
-    Serial.println("[Ubidots] Upload fehlgeschlagen");
-    }
-}
