@@ -21,19 +21,3 @@ class DHTSensor {
   float getTemperature() const { return temperature; } 
   float getHumidity() const { return humidity; }
 };
-
-// Sensoren auslesen
-void readSensors() {
-  sensor_hum_temp.update();
-  data.tempRaw = sensor_hum_temp.getTemperature();
-  data.humRaw  = sensor_hum_temp.getHumidity();
-}
-
-// Rohwerte (ADC)
-struct rawDataSensors { float tempRaw; float humRaw; };
-rawDataSensors data = {NAN, NAN};
-
-
-// Sensor(e)
-// KY-015 (DHT11) am Digitalpin D2
-DHTSensor sensor_hum_temp(2, DHT11);

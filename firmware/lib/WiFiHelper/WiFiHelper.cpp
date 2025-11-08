@@ -1,6 +1,5 @@
 #include "WiFiHelper.h" //<<< Lib - Verbindung zum WiFi
 #include "MillisTimer.h" //<<< Lib - Timer
-#include "secrets.h"
 
 // Timers
   MillisTimer loadingMS(500);
@@ -8,12 +7,12 @@
   MillisTimer retryMS(5000);
 
 // Verbindung mit WLAN herstellen
-void connectWiFi(const char* WIFI_SSID, const char* WIFI_PASS) {
+void connectWiFi(const char* ssid, const char* password) {
   
   Serial.print("Verbinde mit WLAN: "); 
-  Serial.println(WIFI_SSID);
+  Serial.println(ssid);
 
-  WiFi.begin(WIFI_SSID, WIFI_PASS); // Start WiFi connection
+  WiFi.begin(ssid, password); // Start WiFi connection
 
   // Erfolgreich verbunden
   if (WiFi.status() == WL_CONNECTED) {
@@ -41,7 +40,7 @@ void maintainWiFi(const char* ssid, const char* password) {
   if (retryMS.ready()) {
     if (WiFi.status() != WL_CONNECTED) {
       Serial.println("WLAN getrennt - versuche Neuverbindung...");
-      WiFi.begin(WIFI_SSID, WIFI_PASS);
+      WiFi.begin(ssid, ssid);
       if(WiFi.status() == WL_CONNECTED) {
         Serial.println("WLAN wieder verbunden!");
         Serial.print("IP-Adresse: ");
